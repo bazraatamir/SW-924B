@@ -1,6 +1,19 @@
-array1 = [1,0,2,3,4];
-array2 = [3,5,6,7,8,13];
-var t = array1.concat(array2)
+
+// array1 = [3,5,6,7,8,14];
+// var t
+// function check(arg){
+//     for(var i = 0; i<arg.length;i++){
+//         if(i%2==0 && arg[i]%2==0 || i%2==1 && arg[i]%2==1){
+//             t=true
+//         }else  t=false
+//     } 
+//    return t
+// }
+// var res = check(array1);
+// console.log(res)
+
+
+
 // function niilber(arg){
 //     var sum=0;
 //     for(var i = 0; i < arg.length; i++){
@@ -60,3 +73,19 @@ var t = array1.concat(array2)
 // var respons = newarr(arr);
 // console.log(respons);
 
+
+var obj = {
+   name:"bazraa",
+   age:15 ,
+   print:function(){
+    console.log(this.name)
+   }
+}
+var obj1 = {
+    name:"amoi",
+    age:15 
+ }
+ for(var x in obj1){
+    console.log(obj1[x])
+ }
+ 
