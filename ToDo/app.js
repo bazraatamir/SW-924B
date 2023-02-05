@@ -3,22 +3,20 @@ const add = document.querySelector('#addBtn');
 const listTodo = document.querySelector('.list-todo');
 let check = true;
 let  arr = [];
+addEventListener('load',show);
 
 
-
-class todoSchema {
-    constructor(id,todoText,check){
-        this.id = id;
-        this.todoText = todoText;
-        this.check = check
-    }
+  let todoSchema = class{
+        constructor(id,todoText){
+            this.id=id,
+            this.todoText = todoText;
+            this.check = false
+        }
+  }
+function id(){
+let Id = Math.random().toString().split(".")[1]
+return Id
 }
-function randomId(){
-    id = Math.random().toString().split('.')[1]
-    return id
-}
-addEventListener('load',show)
-
 
 add.addEventListener('click',createTodo);
 
@@ -28,8 +26,10 @@ function createTodo(){
     let update = document.createElement('button');
     let check = document.createElement('button');
     let todoText = document.createElement('input');
-    let todoObject = new todoSchema(randomId(),todoIn.value,true);
+    let todoObject = new todoSchema(id(),todoIn.value);
     Dlt.setAttribute('data-id',`${todoObject.id}`)
+    update.setAttribute('data-id',`${todoObject.id}`)
+    check.setAttribute('data-id',`${todoObject.id}`)
     Dlt.innerHTML = `<i class="fa-solid fa-trash"></i>`;
     update.innerHTML = `<i class="fa-solid fa-file-pen"></i>`;
     check.innerHTML = `<i class="fa-solid fa-square-check"></i>`;
@@ -40,36 +40,41 @@ function createTodo(){
     test.appendChild(update);
     test.appendChild(check);
     listTodo.appendChild(test);
-   
-    saveLocal(todoObject)
-    
+    saveLocal(todoObject);;
 }
+
 function saveLocal(arg){
-    if(localStorage.getItem('todo')==null){
-         arr.push(arg);
-         localStorage.setItem('todo',JSON.stringify(arr))
+    if(localStorage.getItem('Todo')===null){
+    arr.push(arg)
+    localStorage.setItem('Todo',JSON.stringify(arr));
+
     }else{
-        let localArr =  JSON.parse( localStorage.getItem('todo'))
-        localArr.push(arg);
-        localStorage.setItem('todo',JSON.stringify(localArr))
+        let newarr = JSON.parse(localStorage.getItem('Todo'));
+        newarr.push(arg);
+         localStorage.setItem('Todo',JSON.stringify(newarr));
 
     }
-
+   
 }
 
 function show(){
-    let localArr =  JSON.parse( localStorage.getItem('todo'))
-    console.log(localArr)
-    localArr.forEach(element => {
+    let newArr = JSON.parse(localStorage.getItem('Todo'));
+    newArr.forEach(element => {
         let test = document.createElement('li');
         let Dlt = document.createElement('button');
         let update = document.createElement('button');
         let check = document.createElement('button');
         let todoText = document.createElement('input');
+        Dlt.setAttribute('data-id',`${element.id}`);
+        update.setAttribute('data-id',`${element.id}`)
+        check.setAttribute('data-id',`${element.id}`)
         Dlt.innerHTML = `<i class="fa-solid fa-trash"></i>`;
         update.innerHTML = `<i class="fa-solid fa-file-pen"></i>`;
         check.innerHTML = `<i class="fa-solid fa-square-check"></i>`;
         todoText.value = element.todoText;
+        if(element.check==true){
+            todoText.classList.add('check')
+        }
         todoText.setAttribute('readonly','readonly')
         test.appendChild(todoText)
         test.appendChild(Dlt);
@@ -79,8 +84,6 @@ function show(){
     });
 }
 
-
-
 listTodo.addEventListener('click',(e)=>{
     let elTarget = e.target;
     if(elTarget.className === "fa-solid fa-trash"){
@@ -88,45 +91,60 @@ listTodo.addEventListener('click',(e)=>{
         let deleteId = parentEl.dataset.id;
         let deleteEl = parentEl.parentElement
         deleteEl.remove();
-        let localArr =  JSON.parse( localStorage.getItem('todo'))
-        let newarr = localArr.filter((element)=>{
-            return element.id != deleteId
-        })
-        console.log(newarr)
-        localStorage.setItem('todo',JSON.stringify(newarr))
-
+    let deleteArr = JSON.parse(localStorage.getItem('Todo'));
+    let deletedarr = deleteArr.filter((el)=>{
+        return el.id != deleteId
+    })
+    localStorage.setItem('Todo',JSON.stringify(deletedarr))
+        
     }
-})
+});
 listTodo.addEventListener('click',(e)=>{
     let elTarget = e.target;
-   
     if(elTarget.className === "fa-solid fa-file-pen"){
-   
         if(!check){
             let parentEl = elTarget.parentElement
             let editparent = parentEl.parentElement
+            let editId = parentEl.dataset.id;
             let editEl = editparent.children[0];
             editEl.setAttribute("readonly","readonly");
+            let editArr = JSON.parse(localStorage.getItem('Todo'));
+            let editArrId = editArr.findIndex(element=>{
+                return editId === element.id
+            })
+            editArr[editArrId].todoText=editEl.value;
+            localStorage.setItem('Todo',JSON.stringify(editArr))
             check=true;
         }else  {
             let parentEl = elTarget.parentElement
             let editparent = parentEl.parentElement
             let editEl = editparent.children[0];
             editEl.removeAttribute('readonly');
+            
             check = false;
         }
     }
     
-})
+});
+
 listTodo.addEventListener('click',(e)=>{
     let elTarget = e.target;
     if(elTarget.className === "fa-solid fa-square-check"){
         let parentEl = elTarget.parentElement
+        let editId = parentEl.dataset.id;
         let editparent = parentEl.parentElement
         let editEl = editparent.children[0];
         editEl.classList.toggle('check');
+        if(editEl.className=='check'){
+            let editArr = JSON.parse(localStorage.getItem('Todo'));
+            let editArrId = editArr.findIndex(element=>{
+                return editId === element.id
+            })
+            editArr[editArrId].check=true;
+            localStorage.setItem('Todo',JSON.stringify(editArr))
+        }
     }
-})
+});
 
 
 
